@@ -75,7 +75,44 @@ async function runClientExample() {
     }
     console.log();
 
-    // 4. List available resources
+    // 4. Test the new weather tools
+    console.log("🌤️ Testing weather tools:");
+    
+    // Test weather forecast
+    try {
+      const forecastResult = await client.callTool({
+        name: "getWeatherForecast",
+        arguments: {
+          latitude: 40.7128,
+          longitude: -74.0060
+        }
+      });
+      
+      if (forecastResult.content && forecastResult.content[0]?.type === "text") {
+        console.log(`  Forecast: ${forecastResult.content[0].text}`);
+      }
+    } catch (error) {
+      console.log(`  Forecast error: ${error.message}`);
+    }
+
+    // Test weather alerts
+    try {
+      const alertsResult = await client.callTool({
+        name: "getWeatherAlerts",
+        arguments: {
+          state: "CA"
+        }
+      });
+      
+      if (alertsResult.content && alertsResult.content[0]?.type === "text") {
+        console.log(`  Alerts: ${alertsResult.content[0].text}`);
+      }
+    } catch (error) {
+      console.log(`  Alerts error: ${error.message}`);
+    }
+    console.log();
+
+    // 5. List available resources
     console.log("📚 Listing available resources:");
     const resources = await client.listResources();
     console.log(`Found ${resources.resources.length} resources:`);
@@ -84,7 +121,7 @@ async function runClientExample() {
     });
     console.log();
 
-    // 5. Read server info resource
+    // 6. Read server info resource
     console.log("📖 Reading server info resource:");
     const serverInfo = await client.readResource({
       uri: "mcp://server-info"
@@ -104,7 +141,7 @@ async function runClientExample() {
     }
     console.log();
 
-    // 6. Read hello message resource
+    // 7. Read hello message resource
     console.log("📖 Reading hello message resource:");
     const helloMessage = await client.readResource({
       uri: "mcp://hello-message"

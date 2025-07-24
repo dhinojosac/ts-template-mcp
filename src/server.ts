@@ -4,6 +4,14 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import helloPlugin from './plugins/helloPlugin.js';
+import weatherPlugin, { registerWeatherTools } from './plugins/weatherPlugin.js';
+import { 
+  SayHelloSchema, 
+  CalculateSchema, 
+  validateToolArgs,
+  type SayHelloArgs,
+  type CalculateArgs 
+} from './schemas/toolSchemas.js';
 
 /**
  * Creates and configures the MCP Server with tools and resources
@@ -16,7 +24,7 @@ function createMCPServer(): McpServer {
     version: '1.0.0',
   });
 
-  // Register the sayHello tool using current SDK approach
+  // Register the sayHello tool with Zod validation
   server.registerTool(
     'sayHello',
     {
@@ -24,10 +32,8 @@ function createMCPServer(): McpServer {
       description: 'Says hello to a person by name'
     },
     async (args: { [x: string]: any }) => {
-      const { name } = args;
-      if (!name || typeof name !== 'string') {
-        throw new Error("Name parameter is required and must be a string");
-      }
+      const { name }: SayHelloArgs = validateToolArgs(SayHelloSchema, args);
+      
       return {
         content: [
           {
@@ -39,7 +45,7 @@ function createMCPServer(): McpServer {
     }
   );
 
-  // Register the calculate tool using current SDK approach
+  // Register the calculate tool with Zod validation
   server.registerTool(
     'calculate',
     {
@@ -47,10 +53,7 @@ function createMCPServer(): McpServer {
       description: 'Performs basic arithmetic calculations (add, subtract, multiply, divide)'
     },
     async (args: { [x: string]: any }) => {
-      const { operation, a, b } = args;
-      if (!operation || typeof a !== 'number' || typeof b !== 'number') {
-        throw new Error("Invalid parameters for calculation. Need operation (string), a (number), b (number)");
-      }
+      const { operation, a, b }: CalculateArgs = validateToolArgs(CalculateSchema, args);
 
       let result: number;
       switch (operation) {
@@ -64,10 +67,10 @@ function createMCPServer(): McpServer {
           result = a * b;
           break;
         case "divide":
-          if (b === 0) throw new Error("Division by zero is not allowed");
           result = a / b;
           break;
         default:
+          // This should never happen due to Zod validation, but keeping for safety
           throw new Error(`Unknown operation: ${operation}. Supported: add, subtract, multiply, divide`);
       }
 
@@ -81,6 +84,9 @@ function createMCPServer(): McpServer {
       };
     }
   );
+
+  // Register weather tools (demonstrating plugin pattern)
+  registerWeatherTools(server);
 
   // Register server info resource using current SDK approach
   server.registerResource(
@@ -100,11 +106,12 @@ function createMCPServer(): McpServer {
             text: JSON.stringify({
               name: "ts-template-mcp-server",
               version: "1.0.0",
-              description: "A TypeScript MCP server template with basic tools and resources",
+              description: "A TypeScript MCP server template with Zod validation and plugin architecture",
               capabilities: ["tools", "resources"],
               author: "Your Name",
               created: new Date().toISOString(),
-              transport: "StreamableHTTP",
+              transport: "StreamableHTTP + STDIO",
+              validation: "Zod schemas",
               tools: [
                 {
                   name: "sayHello",
@@ -115,6 +122,16 @@ function createMCPServer(): McpServer {
                   name: "calculate",
                   description: "Performs basic arithmetic calculations",
                   parameters: "{ operation: 'add'|'subtract'|'multiply'|'divide', a: number, b: number }"
+                },
+                {
+                  name: "getWeatherForecast",
+                  description: "Get weather forecast for coordinates",
+                  parameters: "{ latitude: number, longitude: number }"
+                },
+                {
+                  name: "getWeatherAlerts",
+                  description: "Get weather alerts for US state",
+                  parameters: "{ state: string }"
                 }
               ]
             }, null, 2)
@@ -181,6 +198,9 @@ async function startServer() {
 
   // Register the hello plugin
   await fastify.register(helloPlugin);
+  
+  // Register the weather plugin
+  await fastify.register(weatherPlugin);
 
   // Create MCP server instance
   const mcpServer = createMCPServer();

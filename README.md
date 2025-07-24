@@ -7,6 +7,7 @@ A comprehensive **TypeScript MCP Server Template** following the [official MCP T
 - **TypeScript** - Type-safe development
 - **Fastify** - Fast and efficient web framework  
 - **@modelcontextprotocol/sdk** - Official MCP Server SDK
+- **Zod** - Runtime type validation and schema definition
 - **@fastify/cors** - CORS support for web clients
 - **tsx** - Modern TypeScript execution
 - **pino-pretty** - Beautiful development logging
@@ -16,9 +17,13 @@ A comprehensive **TypeScript MCP Server Template** following the [official MCP T
 ```
 ts-template-mcp-server/
 ├── src/
-│   ├── server.ts              # MCP server with official SDK patterns
+│   ├── server.ts              # MCP server with Zod validation
+│   ├── schemas/
+│   │   ├── toolSchemas.ts     # Zod schemas for tool validation
+│   │   └── commonSchemas.ts   # Reusable validation schemas
 │   └── plugins/
-│       └── helloPlugin.ts     # Fastify plugin with REST endpoint
+│       ├── helloPlugin.ts     # Fastify plugin with REST endpoint
+│       └── weatherPlugin.ts   # Weather tools with Zod validation
 ├── client-example.js          # Client usage examples
 ├── tsconfig.json              # TypeScript configuration
 ├── package.json               # Dependencies and scripts
@@ -67,6 +72,9 @@ npm run start:stdio
 
 - **MCP Endpoint**: `/mcp` - Model Context Protocol interface (all HTTP methods)
 - **Hello Plugin**: `GET /hello/:name` - Traditional REST API endpoint  
+- **Weather Plugin**: 
+  - `GET /weather/forecast?lat=40.7128&lng=-74.0060` - Weather forecast
+  - `GET /weather/alerts/:state` - Weather alerts for US state
 - **Health Check**: `GET /health` - Enhanced server status with session info
 - **Server Info**: `GET /info` - Server capabilities and endpoints
 
@@ -111,6 +119,34 @@ This will demonstrate:
 ## 🔧 MCP Features (Following Official SDK Patterns)
 
 ### 🛠️ Tools
+
+All tools use **Zod validation** for type-safe argument validation:
+
+- **sayHello**: Greets a person by name
+- **calculate**: Performs arithmetic operations
+- **getWeatherForecast**: Gets weather forecast for coordinates
+- **getWeatherAlerts**: Gets weather alerts for US states
+
+### 📋 Zod Validation
+
+The server uses Zod schemas for robust argument validation:
+
+```typescript
+// Example: Weather forecast tool
+const WeatherForecastSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180)
+});
+
+// Usage in tool
+const { latitude, longitude } = validateToolArgs(WeatherForecastSchema, args);
+```
+
+**Benefits:**
+- ✅ **Type Safety**: Runtime validation matches TypeScript types
+- ✅ **Better Errors**: Descriptive validation error messages
+- ✅ **Reusability**: Common schemas can be shared across tools
+- ✅ **Maintainability**: Centralized validation logic
 
 The server provides two example tools using official SDK patterns:
 
