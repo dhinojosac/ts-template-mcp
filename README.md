@@ -1,27 +1,28 @@
-# My MCP Server 🚀
+# TypeScript MCP Server Template 🚀
 
-A complete TypeScript project featuring a **Model Context Protocol (MCP) Server** built with **Fastify**, providing both MCP tools/resources and traditional REST endpoints.
+A comprehensive **TypeScript MCP Server Template** following the [official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices, built with **Fastify** and providing tools, resources, and prompts.
 
 ## 🛠️ Tech Stack
 
 - **TypeScript** - Type-safe development
-- **Fastify** - Fast and efficient web framework
-- **@modelcontextprotocol/sdk** - MCP Server implementation
-- **Zod** - Runtime type validation
-- **@fastify/cors** - CORS support
+- **Fastify** - Fast and efficient web framework  
+- **@modelcontextprotocol/sdk** - Official MCP Server SDK
+- **@fastify/cors** - CORS support for web clients
 - **tsx** - Modern TypeScript execution
+- **pino-pretty** - Beautiful development logging
 
 ## 📦 Project Structure
 
 ```
-my-mcp-server/
+ts-template-mcp-server/
 ├── src/
-│   ├── server.ts              # Main MCP server entry point
+│   ├── server.ts              # MCP server with official SDK patterns
 │   └── plugins/
 │       └── helloPlugin.ts     # Fastify plugin with REST endpoint
+├── client-example.js          # Client usage examples
 ├── tsconfig.json              # TypeScript configuration
 ├── package.json               # Dependencies and scripts
-└── README.md                  # This file
+└── README.md                  # This documentation
 ```
 
 ## 🚀 Getting Started
@@ -53,13 +54,14 @@ npm start
 
 The server will start on `http://localhost:3000` with the following endpoints:
 
-- **MCP Endpoint**: `POST /mcp` - Model Context Protocol interface
-- **Hello Plugin**: `GET /hello/:name` - REST API endpoint
-- **Health Check**: `GET /health` - Server status
+- **MCP Endpoint**: `/mcp` - Model Context Protocol interface (all HTTP methods)
+- **Hello Plugin**: `GET /hello/:name` - Traditional REST API endpoint  
+- **Health Check**: `GET /health` - Enhanced server status with session info
+- **Server Info**: `GET /info` - Server capabilities and endpoints
 
 ## 🧪 Testing the Server
 
-### Health Check
+### Quick Health Check
 
 ```bash
 curl http://localhost:3000/health
@@ -70,31 +72,36 @@ Expected response:
 {
   "status": "ok",
   "timestamp": "2024-01-01T12:00:00.000Z",
-  "server": "basic-mcp-server",
-  "version": "1.0.0"
+  "server": "ts-template-mcp-server",
+  "version": "1.0.0",
+  "uptime": 123.456,
+  "sessions": 0,
+  "capabilities": ["tools", "resources", "prompts"]
 }
 ```
 
-### Hello Plugin (REST API)
+### Using the Client Example
+
+The included client example demonstrates all MCP features:
 
 ```bash
-curl http://localhost:3000/hello/World
+node client-example.js
 ```
 
-Expected response:
-```json
-{
-  "greeting": "Hi, World!"
-}
-```
+This will demonstrate:
+- ✅ Connection to MCP server
+- 🔧 Listing and calling tools
+- 📚 Listing and reading resources  
+- 💭 Listing and getting prompts
+- 🚨 Error handling examples
 
-## 🔧 Testing MCP Tools and Resources
+## 🔧 MCP Features (Following Official SDK Patterns)
 
-The MCP server provides tools and resources that can be accessed via the Model Context Protocol. Here are examples using curl:
+### 🛠️ Tools
 
-### MCP Tool: `sayHello`
+The server provides two example tools using official SDK patterns:
 
-**List Available Tools:**
+#### 1. `sayHello` Tool
 ```bash
 curl -X POST http://localhost:3000/mcp \
   -H "Content-Type: application/json" \
@@ -102,11 +109,17 @@ curl -X POST http://localhost:3000/mcp \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
-    "method": "tools/list"
+    "method": "tools/call",
+    "params": {
+      "name": "sayHello",
+      "arguments": {
+        "name": "Developer"
+      }
+    }
   }'
 ```
 
-**Call the sayHello Tool:**
+#### 2. `calculate` Tool
 ```bash
 curl -X POST http://localhost:3000/mcp \
   -H "Content-Type: application/json" \
@@ -116,33 +129,21 @@ curl -X POST http://localhost:3000/mcp \
     "id": 2,
     "method": "tools/call",
     "params": {
-      "name": "sayHello",
+      "name": "calculate",
       "arguments": {
-        "name": "Alice"
+        "operation": "multiply",
+        "a": 15,
+        "b": 7
       }
     }
   }'
 ```
 
-Expected response:
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "Hello, Alice!"
-      }
-    ]
-  }
-}
-```
+### 📚 Resources
 
-### MCP Resource: `hello://`
+Two example resources with proper URI schemes:
 
-**List Available Resources:**
+#### 1. Server Information (`mcp://server-info`)
 ```bash
 curl -X POST http://localhost:3000/mcp \
   -H "Content-Type: application/json" \
@@ -150,11 +151,14 @@ curl -X POST http://localhost:3000/mcp \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
-    "method": "resources/list"
+    "method": "resources/read",
+    "params": {
+      "uri": "mcp://server-info"
+    }
   }'
 ```
 
-**Read a Hello Resource:**
+#### 2. Hello Message (`mcp://hello-message`)
 ```bash
 curl -X POST http://localhost:3000/mcp \
   -H "Content-Type: application/json" \
@@ -164,104 +168,146 @@ curl -X POST http://localhost:3000/mcp \
     "id": 4,
     "method": "resources/read",
     "params": {
-      "uri": "hello://Bob"
+      "uri": "mcp://hello-message"
     }
   }'
 ```
 
-Expected response:
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 4,
-  "result": {
-    "contents": [
-      {
-        "uri": "hello://Bob",
-        "mimeType": "text/plain",
-        "text": "Hello from resource, Bob"
+### 💭 Prompts
+
+Example prompt with flexible arguments:
+
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Mcp-Session-Id: test-session" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 5,
+    "method": "prompts/get",
+    "params": {
+      "name": "greeting-prompt",
+      "arguments": {
+        "name": "Alice",
+        "style": "enthusiastic"
       }
-    ]
-  }
-}
+    }
+  }'
 ```
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Best Practices
 
-### MCP Server Features
+### Official SDK Patterns Used
 
-- **Tools**: Interactive functions that can be called with parameters
-  - `sayHello`: Takes a name and returns a greeting message
-- **Resources**: Static or dynamic content accessible via URI
-  - `hello://{name}`: Returns a resource-based greeting
+This template follows the [official MCP TypeScript SDK documentation](https://github.com/modelcontextprotocol/typescript-sdk):
 
-### Fastify Integration
+- ✅ **Proper Request Handlers**: Using `setRequestHandler()` for all MCP operations
+- ✅ **Session Management**: Map-based session storage for transport instances
+- ✅ **Streamable HTTP Transport**: Latest transport method (not deprecated SSE)
+- ✅ **Standard JSON Schema**: Proper tool input schemas without Zod dependency
+- ✅ **Error Handling**: Comprehensive error handling with proper MCP error responses
+- ✅ **Resource URI Schemes**: Using `mcp://` scheme following best practices
 
-- **CORS**: Enabled for all origins with MCP-specific headers
-- **Plugin System**: Modular hello endpoint via Fastify plugin
-- **Error Handling**: Comprehensive error handling with proper HTTP status codes
-- **Logging**: Structured logging with pretty formatting in development
+### Key Improvements Over Basic Implementation
 
-### Type Safety
+1. **Session Management**: Proper session tracking with cleanup
+2. **Enhanced Error Handling**: Detailed error responses and logging
+3. **Multiple Capabilities**: Tools, resources, AND prompts (many examples only show one)
+4. **Production Ready**: Graceful shutdown, health checks, proper logging
+5. **Type Safety**: Full TypeScript support without runtime schema validation overhead
 
-- **Zod Schemas**: Runtime validation for all inputs
-- **TypeScript**: Full type safety throughout the codebase
-- **Strict Configuration**: Comprehensive TypeScript strict mode settings
+### Integration Features
+
+- **CORS**: Enhanced CORS configuration for web clients
+- **Logging**: Structured logging with pino-pretty for development
+- **Health Monitoring**: Detailed health endpoint with session metrics
+- **REST + MCP**: Hybrid server supporting both traditional REST and MCP protocols
 
 ## 🔧 Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server with hot reload (TypeScript)
+- `npm run dev` - Start development server with hot reload and pretty logging
 - `npm run build` - Compile TypeScript to JavaScript in `dist/` folder
-- `npm start` - Run the compiled JavaScript server (production)
-- `npm run clean` - Remove compiled files from `dist/` folder
+- `npm start` - Run compiled server (production mode)
+- `npm run clean` - Remove compiled files
+- `npm run lint` - Run ESLint (placeholder)
+- `npm test` - Run tests (placeholder)
 
-### Development vs Production
+### Environment Requirements
 
-| Mode | Command | Description | Use Case |
-|------|---------|-------------|----------|
-| **Development** | `npm run dev` | Uses `tsx` to run TypeScript directly with hot reload | Local development, testing |
-| **Production** | `npm run build && npm start` | Compiles to JavaScript then runs with Node.js | Production servers, deployment |
+- **Node.js**: >=18.0.0
+- **TypeScript**: ^5.7.2
+- **MCP SDK**: ^1.0.4
 
 ### Adding New MCP Tools
 
-1. Add the tool to the `ListToolsRequestSchema` handler in `src/server.ts`
-2. Handle the tool call in the `CallToolRequestSchema` handler
-3. Create Zod schema for input validation
+Following official SDK patterns:
 
-### Adding New MCP Resources
+1. Add tool definition to `tools/list` handler:
+```typescript
+{
+  name: "myTool",
+  description: "My custom tool",
+  inputSchema: {
+    type: "object",
+    properties: {
+      param: { type: "string", description: "Parameter description" }
+    },
+    required: ["param"]
+  }
+}
+```
 
-1. Add the resource to the `ListResourcesRequestSchema` handler
-2. Handle resource reading in the `ReadResourceRequestSchema` handler
-3. Implement URI parsing and content generation
+2. Handle tool execution in `tools/call` handler:
+```typescript
+case "myTool":
+  const { param } = args as { param: string };
+  return {
+    content: [{ type: "text", text: `Result: ${param}` }]
+  };
+```
 
-### Adding New Fastify Endpoints
+### Adding New Resources
 
-1. Create a new plugin in `src/plugins/`
-2. Register the plugin in `src/server.ts`
-3. Follow the existing pattern with Zod validation
+1. Add to `resources/list` handler
+2. Handle reading in `resources/read` handler
+3. Use proper URI schemes (`mcp://`, `file://`, etc.)
 
-## 🌐 CORS Configuration
+### Adding Prompts
 
-The server is configured with CORS enabled for all origins (`*`) and includes the required MCP headers:
+1. Add to `prompts/list` handler  
+2. Handle generation in `prompts/get` handler
+3. Return proper message format with roles
 
-- `Content-Type`
-- `Authorization`
-- `Mcp-Session-Id`
+## 🌐 CORS & Security
+
+Enhanced CORS configuration for MCP compatibility:
+
+- **Origin**: Flexible origin handling (`true` instead of `*`)
+- **Headers**: All required MCP headers plus standard web headers
+- **Methods**: All HTTP methods for maximum compatibility
+- **Session Security**: Session-based transport isolation
+
+## 📚 Learn More
+
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
+- [Official TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- [MCP Server Examples](https://github.com/modelcontextprotocol)
+- [Fastify Documentation](https://fastify.dev/)
 
 ## 📝 License
 
-MIT License
+MIT License - see LICENSE file for details
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
+3. Follow the existing patterns from official SDK documentation
 4. Add tests if applicable
 5. Submit a pull request
 
 ---
 
-**Made with ❤️ using TypeScript and Fastify** 
+**Built following [Official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices** 🎯 

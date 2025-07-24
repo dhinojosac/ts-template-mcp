@@ -1,35 +1,46 @@
 {
-  "name": "my-mcp-server",
+  "name": "ts-template-mcp-server",
   "version": "1.0.0",
-  "description": "Basic MCP Server with Fastify",
+  "description": "TypeScript MCP Server Template following official SDK best practices",
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
     "dev": "tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "lint": "eslint src/**/*.ts",
+    "test": "echo \"Tests not implemented yet\" && exit 0"
   },
   "keywords": [
     "mcp",
+    "model-context-protocol",
     "fastify",
     "typescript",
-    "server"
+    "server",
+    "template",
+    "sdk"
   ],
-  "author": "",
+  "author": "Your Name",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dhinojosac/ts-template-mcp.git"
+  },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "fastify": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "pino-pretty": "^13.0.0",
-    "zod": "^3.23.8"
+    "pino-pretty": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
