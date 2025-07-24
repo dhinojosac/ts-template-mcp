@@ -1,0 +1,35 @@
+{
+  "name": "my-mcp-server",
+  "version": "1.0.0",
+  "description": "Basic MCP Server with Fastify",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "mcp",
+    "fastify",
+    "typescript",
+    "server"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "fastify": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
