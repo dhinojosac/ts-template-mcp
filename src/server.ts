@@ -6,7 +6,7 @@ import helloPlugin from './plugins/helloPlugin.js';
 
 /**
  * Creates and configures the MCP Server with tools and resources
- * Following official MCP TypeScript SDK patterns
+ * Using current SDK version compatible methods with official best practices
  * @returns Configured MCP Server instance
  */
 function createMCPServer(): McpServer {
@@ -15,232 +15,142 @@ function createMCPServer(): McpServer {
     version: '1.0.0',
   });
 
-  // Register tools using official SDK patterns
-  server.setRequestHandler("tools/list", async () => {
-    return {
-      tools: [
-        {
-          name: "sayHello",
-          description: "Says hello to a person by name",
-          inputSchema: {
-            type: "object",
-            properties: {
-              name: {
-                type: "string",
-                description: "The name of the person to greet"
-              }
-            },
-            required: ["name"]
-          }
-        },
-        {
-          name: "calculate",
-          description: "Performs basic arithmetic calculations",
-          inputSchema: {
-            type: "object",
-            properties: {
-              operation: {
-                type: "string",
-                enum: ["add", "subtract", "multiply", "divide"],
-                description: "The arithmetic operation to perform"
-              },
-              a: {
-                type: "number",
-                description: "First number"
-              },
-              b: {
-                type: "number", 
-                description: "Second number"
-              }
-            },
-            required: ["operation", "a", "b"]
-          }
-        }
-      ]
-    };
-  });
-
-  server.setRequestHandler("tools/call", async (request) => {
-    const { name, arguments: args } = request.params;
-
-    switch (name) {
-      case "sayHello":
-        if (!args?.name || typeof args.name !== 'string') {
-          throw new Error("Name parameter is required and must be a string");
-        }
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Hello, ${args.name}! 🎉`
-            }
-          ]
-        };
-
-      case "calculate":
-        const { operation, a, b } = args as { operation: string; a: number; b: number };
-        
-        if (!operation || typeof a !== 'number' || typeof b !== 'number') {
-          throw new Error("Invalid parameters for calculation");
-        }
-
-        let result: number;
-        switch (operation) {
-          case "add":
-            result = a + b;
-            break;
-          case "subtract":
-            result = a - b;
-            break;
-          case "multiply":
-            result = a * b;
-            break;
-          case "divide":
-            if (b === 0) throw new Error("Division by zero is not allowed");
-            result = a / b;
-            break;
-          default:
-            throw new Error(`Unknown operation: ${operation}`);
-        }
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `${a} ${operation} ${b} = ${result}`
-            }
-          ]
-        };
-
-      default:
-        throw new Error(`Unknown tool: ${name}`);
-    }
-  });
-
-  // Register resources using official SDK patterns
-  server.setRequestHandler("resources/list", async () => {
-    return {
-      resources: [
-        {
-          uri: "mcp://server-info",
-          name: "Server Information",
-          description: "Information about this MCP server",
-          mimeType: "application/json"
-        },
-        {
-          uri: "mcp://hello-message",
-          name: "Hello Message",
-          description: "A simple hello message resource",
-          mimeType: "text/plain"
-        }
-      ]
-    };
-  });
-
-  server.setRequestHandler("resources/read", async (request) => {
-    const { uri } = request.params;
-
-    switch (uri) {
-      case "mcp://server-info":
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: "application/json",
-              text: JSON.stringify({
-                name: "ts-template-mcp-server",
-                version: "1.0.0",
-                description: "A TypeScript MCP server template with basic tools and resources",
-                capabilities: ["tools", "resources"],
-                author: "Your Name",
-                created: new Date().toISOString()
-              }, null, 2)
-            }
-          ]
-        };
-
-      case "mcp://hello-message":
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: "text/plain",
-              text: "Hello from the MCP TypeScript Server! 🚀\n\nThis is a resource that can be read by MCP clients."
-            }
-          ]
-        };
-
-      default:
-        throw new Error(`Unknown resource: ${uri}`);
-    }
-  });
-
-  // Add prompts following official patterns
-  server.setRequestHandler("prompts/list", async () => {
-    return {
-      prompts: [
-        {
-          name: "greeting-prompt",
-          description: "Generate a personalized greeting",
-          arguments: [
-            {
-              name: "name",
-              description: "The name of the person to greet",
-              required: true
-            },
-            {
-              name: "style",
-              description: "The style of greeting (formal, casual, enthusiastic)",
-              required: false
-            }
-          ]
-        }
-      ]
-    };
-  });
-
-  server.setRequestHandler("prompts/get", async (request) => {
-    const { name, arguments: args } = request.params;
-
-    if (name === "greeting-prompt") {
-      const personName = args?.name || "there";
-      const style = args?.style || "casual";
-      
-      let greeting;
-      switch (style) {
-        case "formal":
-          greeting = `Good day, ${personName}. I hope you are well.`;
-          break;
-        case "enthusiastic":
-          greeting = `Hey there, ${personName}! 🎉 So excited to meet you!`;
-          break;
-        default:
-          greeting = `Hi ${personName}! How's it going?`;
+  // Register the sayHello tool using current SDK approach
+  server.registerTool(
+    'sayHello',
+    {
+      title: 'Say Hello',
+      description: 'Says hello to a person by name'
+    },
+    async (args: { [x: string]: any }) => {
+      const { name } = args;
+      if (!name || typeof name !== 'string') {
+        throw new Error("Name parameter is required and must be a string");
       }
-
       return {
-        description: `A ${style} greeting for ${personName}`,
-        messages: [
+        content: [
           {
-            role: "user",
-            content: {
-              type: "text",
-              text: greeting
-            }
+            type: 'text',
+            text: `Hello, ${name}! 🎉`
           }
         ]
       };
     }
+  );
 
-    throw new Error(`Unknown prompt: ${name}`);
-  });
+  // Register the calculate tool using current SDK approach
+  server.registerTool(
+    'calculate',
+    {
+      title: 'Calculate',
+      description: 'Performs basic arithmetic calculations (add, subtract, multiply, divide)'
+    },
+    async (args: { [x: string]: any }) => {
+      const { operation, a, b } = args;
+      if (!operation || typeof a !== 'number' || typeof b !== 'number') {
+        throw new Error("Invalid parameters for calculation. Need operation (string), a (number), b (number)");
+      }
+
+      let result: number;
+      switch (operation) {
+        case "add":
+          result = a + b;
+          break;
+        case "subtract":
+          result = a - b;
+          break;
+        case "multiply":
+          result = a * b;
+          break;
+        case "divide":
+          if (b === 0) throw new Error("Division by zero is not allowed");
+          result = a / b;
+          break;
+        default:
+          throw new Error(`Unknown operation: ${operation}. Supported: add, subtract, multiply, divide`);
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${a} ${operation} ${b} = ${result}`
+          }
+        ]
+      };
+    }
+  );
+
+  // Register server info resource using current SDK approach
+  server.registerResource(
+    'server-info',
+    'mcp://server-info',
+    {
+      title: 'Server Information',
+      description: 'Information about this MCP server',
+      mimeType: 'application/json'
+    },
+    async (uri) => {
+      return {
+        contents: [
+          {
+            uri: uri.href,
+            mimeType: 'application/json',
+            text: JSON.stringify({
+              name: "ts-template-mcp-server",
+              version: "1.0.0",
+              description: "A TypeScript MCP server template with basic tools and resources",
+              capabilities: ["tools", "resources"],
+              author: "Your Name",
+              created: new Date().toISOString(),
+              transport: "StreamableHTTP",
+              tools: [
+                {
+                  name: "sayHello",
+                  description: "Says hello to a person by name",
+                  parameters: "{ name: string }"
+                },
+                {
+                  name: "calculate",
+                  description: "Performs basic arithmetic calculations",
+                  parameters: "{ operation: 'add'|'subtract'|'multiply'|'divide', a: number, b: number }"
+                }
+              ]
+            }, null, 2)
+          }
+        ]
+      };
+    }
+  );
+
+  // Register hello message resource using current SDK approach
+  server.registerResource(
+    'hello-message',
+    'mcp://hello-message',
+    {
+      title: 'Hello Message',
+      description: 'A simple hello message resource',
+      mimeType: 'text/plain'
+    },
+    async (uri) => {
+      return {
+        contents: [
+          {
+            uri: uri.href,
+            mimeType: 'text/plain',
+            text: 'Hello from the MCP TypeScript Server! 🚀\n\nThis is a resource that can be read by MCP clients.\n\nThis server follows best practices from the official MCP TypeScript SDK.\n\nAvailable tools:\n- sayHello: { name: string }\n- calculate: { operation: string, a: number, b: number }'
+          }
+        ]
+      };
+    }
+  );
 
   return server;
 }
 
 /**
  * Sets up and starts the Fastify server with MCP integration
- * Following official SDK patterns for session management
+ * Following official SDK patterns for session management where possible
  */
 async function startServer() {
   const fastify = Fastify({
@@ -274,13 +184,13 @@ async function startServer() {
   // Create MCP server instance
   const mcpServer = createMCPServer();
 
-  // Session storage for better transport management
+  // Session storage for better transport management (following official patterns)
   const sessions = new Map<string, StreamableHTTPServerTransport>();
 
   // MCP endpoint with proper session management
   fastify.all('/mcp', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      // Get or create session ID
+      // Get or create session ID (following official patterns)
       const sessionId = request.headers['mcp-session-id'] as string || 
                        `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -323,7 +233,7 @@ async function startServer() {
       version: '1.0.0',
       uptime: process.uptime(),
       sessions: sessions.size,
-      capabilities: ['tools', 'resources', 'prompts']
+      capabilities: ['tools', 'resources']
     };
   });
 
@@ -338,8 +248,9 @@ async function startServer() {
         health: '/health',
         hello: '/hello/:name'
       },
-      capabilities: ['tools', 'resources', 'prompts'],
-      transport: 'StreamableHTTP'
+      capabilities: ['tools', 'resources'],
+      transport: 'StreamableHTTP',
+      sdkVersion: '@modelcontextprotocol/sdk ^1.0.4'
     };
   });
 
@@ -403,4 +314,4 @@ startServer().catch((err) => {
     console.error(err.stack);
   }
   process.exit(1);
-}); 
+});

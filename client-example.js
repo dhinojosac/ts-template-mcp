@@ -1,7 +1,7 @@
 /**
  * MCP Client Example
- * Based on official TypeScript SDK documentation patterns
- * Demonstrates connecting to and using the MCP server
+ * Demonstrates connecting to and using the MCP server with current SDK version
+ * Tests tools and resources available in our TypeScript MCP server
  */
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -11,10 +11,10 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 const SERVER_URL = "http://localhost:3000/mcp";
 
 /**
- * Example demonstrating MCP client usage following official SDK patterns
+ * Example demonstrating MCP client usage with our current server implementation
  */
 async function runClientExample() {
-  console.log("🔌 MCP Client Example - Following Official SDK Patterns");
+  console.log("🔌 MCP Client Example - TypeScript Server Template");
   console.log(`📡 Connecting to MCP server at: ${SERVER_URL}`);
 
   // Create client instance
@@ -53,19 +53,25 @@ async function runClientExample() {
     }
     console.log();
 
-    // 3. Call the calculate tool
-    console.log("🧮 Calling calculate tool:");
-    const calcResult = await client.callTool({
-      name: "calculate",
-      arguments: {
-        operation: "multiply",
-        a: 15,
-        b: 7
-      }
-    });
+    // 3. Call the calculate tool with different operations
+    console.log("🧮 Testing calculate tool:");
     
-    if (calcResult.content && calcResult.content[0]?.type === "text") {
-      console.log(`Calculation result: ${calcResult.content[0].text}`);
+    const operations = [
+      { operation: "add", a: 15, b: 7 },
+      { operation: "multiply", a: 8, b: 9 },
+      { operation: "divide", a: 100, b: 4 },
+      { operation: "subtract", a: 50, b: 23 }
+    ];
+
+    for (const calc of operations) {
+      const calcResult = await client.callTool({
+        name: "calculate",
+        arguments: calc
+      });
+      
+      if (calcResult.content && calcResult.content[0]?.type === "text") {
+        console.log(`  ${calcResult.content[0].text}`);
+      }
     }
     console.log();
 
@@ -86,7 +92,15 @@ async function runClientExample() {
     
     if (serverInfo.contents && serverInfo.contents[0]?.text) {
       console.log("Server Info:");
-      console.log(serverInfo.contents[0].text);
+      const info = JSON.parse(serverInfo.contents[0].text);
+      console.log(`  Name: ${info.name}`);
+      console.log(`  Version: ${info.version}`);
+      console.log(`  Description: ${info.description}`);
+      console.log(`  Transport: ${info.transport}`);
+      console.log(`  Tools: ${info.tools.length}`);
+      info.tools.forEach(tool => {
+        console.log(`    - ${tool.name}: ${tool.parameters}`);
+      });
     }
     console.log();
 
@@ -99,31 +113,6 @@ async function runClientExample() {
     if (helloMessage.contents && helloMessage.contents[0]?.text) {
       console.log("Hello Message:");
       console.log(helloMessage.contents[0].text);
-    }
-    console.log();
-
-    // 7. List available prompts
-    console.log("💭 Listing available prompts:");
-    const prompts = await client.listPrompts();
-    console.log(`Found ${prompts.prompts.length} prompts:`);
-    prompts.prompts.forEach(prompt => {
-      console.log(`  - ${prompt.name}: ${prompt.description}`);
-    });
-    console.log();
-
-    // 8. Get a prompt
-    console.log("💬 Getting greeting prompt:");
-    const prompt = await client.getPrompt({
-      name: "greeting-prompt",
-      arguments: {
-        name: "Alice",
-        style: "enthusiastic"
-      }
-    });
-    
-    console.log(`Prompt: ${prompt.description}`);
-    if (prompt.messages && prompt.messages[0]?.content?.text) {
-      console.log(`Message: ${prompt.messages[0].content.text}`);
     }
     console.log();
 
@@ -146,7 +135,7 @@ async function runClientExample() {
 }
 
 /**
- * Error handling example
+ * Error handling and edge cases demonstration
  */
 async function demonstrateErrorHandling() {
   console.log("\n🚨 Demonstrating error handling:");
@@ -170,18 +159,41 @@ async function demonstrateErrorHandling() {
       console.log(`✅ Caught expected tool error: ${toolError.message}`);
     }
 
-    // Try to call a tool with invalid arguments
+    // Try to call calculate with invalid arguments
+    try {
+      await client.callTool({
+        name: "calculate",
+        arguments: {
+          operation: "invalidOp",
+          a: 10,
+          b: 5
+        }
+      });
+    } catch (calcError) {
+      console.log(`✅ Caught expected calculation error: ${calcError.message}`);
+    }
+
+    // Try to call calculate with division by zero
     try {
       await client.callTool({
         name: "calculate",
         arguments: {
           operation: "divide",
           a: 10,
-          b: 0 // Division by zero
+          b: 0
         }
       });
     } catch (divisionError) {
       console.log(`✅ Caught expected division error: ${divisionError.message}`);
+    }
+
+    // Try to read a non-existent resource
+    try {
+      await client.readResource({
+        uri: "mcp://non-existent"
+      });
+    } catch (resourceError) {
+      console.log(`✅ Caught expected resource error: ${resourceError.message}`);
     }
 
     await client.close();
@@ -198,6 +210,7 @@ runClientExample()
   .then(() => {
     console.log("\n🎉 MCP Client example completed!");
     console.log("📚 Learn more: https://github.com/modelcontextprotocol/typescript-sdk");
+    console.log("🔗 Your server: https://github.com/dhinojosac/ts-template-mcp");
   })
   .catch(error => {
     console.error("💥 Fatal error:", error);
