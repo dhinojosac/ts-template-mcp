@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/server.ts",
+    "dev:stdio": "tsx src/server.ts --stdio",
     "build": "tsc",
     "start": "node dist/server.js",
+    "start:stdio": "node dist/server.js --stdio",
     "clean": "rimraf dist",
     "lint": "eslint src/**/*.ts",
     "test": "echo \"Tests not implemented yet\" && exit 0"

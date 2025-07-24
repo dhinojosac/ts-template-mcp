@@ -2,6 +2,7 @@ import Fastify, { FastifyRequest, FastifyReply, FastifyError } from 'fastify';
 import cors from '@fastify/cors';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import helloPlugin from './plugins/helloPlugin.js';
 
 /**
@@ -305,13 +306,29 @@ const gracefulShutdown = (signal: string) => {
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
-// Start the server
-startServer().catch((err) => {
-  console.error('❌ Failed to start server:');
-  console.error(err);
-  if (err.stack) {
-    console.error('Stack trace:');
-    console.error(err.stack);
-  }
-  process.exit(1);
-});
+// Check if running in STDIO mode (for CLI clients like Claude Desktop)
+const isStdioMode = process.argv.includes('--stdio') || process.env.MCP_STDIO === 'true';
+
+if (isStdioMode) {
+  // STDIO mode for CLI clients (following Node.js quickstart pattern)
+  const mcpServer = createMCPServer();
+  const transport = new StdioServerTransport();
+  
+  mcpServer.connect(transport).catch((err) => {
+    console.error('❌ Failed to start STDIO server:', err);
+    process.exit(1);
+  });
+  
+  console.error('🚀 MCP Server running in STDIO mode');
+} else {
+  // HTTP mode for web clients
+  startServer().catch((err) => {
+    console.error('❌ Failed to start HTTP server:');
+    console.error(err);
+    if (err.stack) {
+      console.error('Stack trace:');
+      console.error(err.stack);
+    }
+    process.exit(1);
+  });
+}

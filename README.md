@@ -35,8 +35,14 @@ npm install
 
 ### 2. Start Development Server
 
+**HTTP Mode (for web clients):**
 ```bash
 npm run dev
+```
+
+**STDIO Mode (for CLI clients like Claude Desktop):**
+```bash
+npm run dev:stdio
 ```
 
 ### 3. Build for Production
@@ -52,12 +58,19 @@ npm run build
 npm start
 ```
 
-The server will start on `http://localhost:3000` with the following endpoints:
+**Production STDIO Mode:**
+```bash
+npm run start:stdio
+```
+
+**HTTP Mode**: The server will start on `http://localhost:3000` with the following endpoints:
 
 - **MCP Endpoint**: `/mcp` - Model Context Protocol interface (all HTTP methods)
 - **Hello Plugin**: `GET /hello/:name` - Traditional REST API endpoint  
 - **Health Check**: `GET /health` - Enhanced server status with session info
 - **Server Info**: `GET /info` - Server capabilities and endpoints
+
+**STDIO Mode**: The server runs as a CLI process for direct integration with MCP clients like Claude Desktop.
 
 ## 🧪 Testing the Server
 
