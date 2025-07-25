@@ -11,6 +11,8 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "start": "node dist/server.js",
+    "start:prod": "node dist/server.js",
+    "start:docker": "node dist/server.js",
     "start:stdio": "node dist/server.js --stdio",
     "clean": "rimraf dist",
     "lint": "eslint src/**/*.ts",
@@ -23,7 +25,7 @@
     "postbuild": "echo \"Build completed successfully!\"",
     "prestart": "npm run build",
     "validate": "npm run type-check && npm run lint",
-    "prepare": "husky"
+    "prepare": "husky install"
   },
   "keywords": [
     "mcp",
@@ -38,7 +40,11 @@
     "claude",
     "anthropic"
   ],
-  "author": "Your Name",
+  "author": {
+    "name": "Diego Hinojosa Córdova",
+    "email": "d.hinojosa.cordova@gmail.com",
+    "url": "https://www.linkedin.com/in/dhinojosac/"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -68,10 +74,10 @@
     "prettier": "^3.0.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.5.3"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=8.0.0"
   },
   "lint-staged": {

@@ -2,6 +2,8 @@
 
 A comprehensive **TypeScript MCP Server Template** following the [official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices, built with **Fastify** and providing tools, resources, and prompts.
 
+**[📖 README en Español](README_ES.md)** - Para usuarios que prefieren documentación en español
+
 ## 🛠️ Tech Stack & Tools Explained
 
 ### Core Technologies
@@ -47,6 +49,14 @@ ts-template-mcp-server/
 ├── client-example.js          # Example client for testing MCP features
 ├── Dockerfile                 # Multi-stage Docker build configuration
 ├── docker-compose.yml         # Docker Compose for local development
+├── .dockerignore              # Docker build context exclusions
+├── DOCKER_TROUBLESHOOTING.md  # Docker issues and solutions documentation
+├── DOCKER_BEST_PRACTICES.md   # Docker best practices guide
+├── CHANGELOG.md               # Version history and release notes
+├── AI_GUIDELINES.md           # AI development guidelines and conventions
+├── AI_PROMPT_EXAMPLES.md      # Specific prompt examples for AI assistance
+├── AI_QUICK_START.md          # Quick start guide for AI assistants
+├── README_ES.md              # Spanish documentation for non-English speakers
 ├── .eslintrc.json            # ESLint configuration with TypeScript rules
 ├── .prettierrc               # Prettier formatting rules
 ├── .husky/pre-commit         # Git hook to run lint-staged
@@ -580,6 +590,20 @@ docker-compose --profile dev up mcp-server-dev
 - **Multi-service orchestration**: Easy management of multiple containers
 - **Development profiles**: Separate configurations for dev/prod
 - **Volume mounts**: Live code reloading in development
+
+### Docker Documentation
+
+For detailed information about Docker setup, troubleshooting, and best practices:
+
+- **[Docker Troubleshooting Guide](DOCKER_TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Docker Best Practices](DOCKER_BEST_PRACTICES.md)** - Best practices for Node.js containerization
+
+**Key improvements made:**
+- ✅ Multi-stage builds for optimized production images
+- ✅ Non-root user execution for security
+- ✅ Proper healthcheck configuration with curl
+- ✅ Separate npm scripts to avoid prestart hook issues
+- ✅ Comprehensive .dockerignore for faster builds
 
 ## 🌐 CORS & Security
 
