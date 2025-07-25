@@ -23,7 +23,7 @@
     "postbuild": "echo \"Build completed successfully!\"",
     "prestart": "npm run build",
     "validate": "npm run type-check && npm run lint",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "keywords": [
     "mcp",

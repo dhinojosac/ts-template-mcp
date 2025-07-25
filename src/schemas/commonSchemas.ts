@@ -130,7 +130,7 @@ export const EmailSchema = z
 
 export const PhoneSchema = z
   .string()
-  .regex(/^\+?[\d\s\-\(\)]+$/, 'Invalid phone number format')
+  .regex(/^\+?[\d\s\-()]+$/, 'Invalid phone number format')
   .describe('Phone number');
 
 export const NameSchema = z
