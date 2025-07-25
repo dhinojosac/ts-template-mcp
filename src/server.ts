@@ -38,7 +38,7 @@ function createMCPServer(): McpServer {
         content: [
           {
             type: 'text',
-            text: `Hello, ${name}! 🎉`
+            text: `Hello, ${name}!`
           }
         ]
       };
@@ -156,7 +156,7 @@ function createMCPServer(): McpServer {
           {
             uri: uri.href,
             mimeType: 'text/plain',
-            text: 'Hello from the MCP TypeScript Server! 🚀\n\nThis is a resource that can be read by MCP clients.\n\nThis server follows best practices from the official MCP TypeScript SDK.\n\nAvailable tools:\n- sayHello: { name: string }\n- calculate: { operation: string, a: number, b: number }'
+            text: 'Hello from the MCP TypeScript Server!\n\nThis is a resource that can be read by MCP clients.\n\nThis server follows best practices from the official MCP TypeScript SDK.\n\nAvailable tools:\n- sayHello: { name: string }\n- calculate: { operation: string, a: number, b: number }'
           }
         ]
       };
@@ -305,21 +305,21 @@ async function startServer() {
       host: '0.0.0.0'
     });
 
-    fastify.log.info(`🚀 MCP Server ready at ${address}`);
-    fastify.log.info('📍 MCP endpoint: /mcp');
-    fastify.log.info('👋 Hello endpoint: /hello/:name');
-    fastify.log.info('❤️  Health check: /health');
-    fastify.log.info('ℹ️  Server info: /info');
+    fastify.log.info(`MCP Server ready at ${address}`);
+    fastify.log.info('MCP endpoint: /mcp');
+    fastify.log.info('Hello endpoint: /hello/:name');
+    fastify.log.info('Health check: /health');
+    fastify.log.info('Server info: /info');
     
   } catch (err) {
-    fastify.log.error('❌ Error starting server:', err);
+          fastify.log.error('Error starting server:', err);
     process.exit(1);
   }
 }
 
 // Enhanced graceful shutdown
 const gracefulShutdown = (signal: string) => {
-  console.log(`\n👋 Received ${signal}, shutting down gracefully...`);
+  console.log(`\nReceived ${signal}, shutting down gracefully...`);
   process.exit(0);
 };
 
@@ -335,15 +335,15 @@ if (isStdioMode) {
   const transport = new StdioServerTransport();
   
   mcpServer.connect(transport).catch((err) => {
-    console.error('❌ Failed to start STDIO server:', err);
+    console.error('Failed to start STDIO server:', err);
     process.exit(1);
   });
   
-  console.error('🚀 MCP Server running in STDIO mode');
+  console.error('MCP Server running in STDIO mode');
 } else {
   // HTTP mode for web clients
   startServer().catch((err) => {
-    console.error('❌ Failed to start HTTP server:');
+    console.error('Failed to start HTTP server:');
     console.error(err);
     if (err.stack) {
       console.error('Stack trace:');

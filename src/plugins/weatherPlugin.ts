@@ -78,7 +78,7 @@ async function simulateWeatherAPI(latitude: number, longitude: number): Promise<
   return `
 🌤️  Current Conditions: ${condition}
 🌡️  Temperature: ${temperature}°C
-📍 Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}
+        Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}
 ⏰ Updated: ${new Date().toLocaleString()}
   `.trim();
 }

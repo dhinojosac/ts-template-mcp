@@ -1,4 +1,4 @@
-# TypeScript MCP Server Template 🚀
+# TypeScript MCP Server Template
 
 A comprehensive **TypeScript MCP Server Template** following the [official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices, built with **Fastify** and providing tools, resources, and prompts.
 
@@ -30,7 +30,7 @@ ts-template-mcp-server/
 └── README.md                  # This documentation
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Install Dependencies
 
@@ -272,6 +272,53 @@ This template follows the [official MCP TypeScript SDK documentation](https://gi
 - **Health Monitoring**: Detailed health endpoint with session metrics
 - **REST + MCP**: Hybrid server supporting both traditional REST and MCP protocols
 
+## 🔄 Git Flow Workflow
+
+This project follows **Git Flow** methodology for organized development:
+
+### Branch Structure
+- **`main`** - Production-ready code
+- **`develop`** - Integration branch for features
+- **`feature/*`** - New features and improvements
+- **`release/*`** - Release preparation
+- **`hotfix/*`** - Critical production fixes
+
+### Development Workflow
+
+```bash
+# Start a new feature
+git flow feature start feature-name
+
+# Work on your feature...
+git add .
+git commit -m "feat: add new feature"
+
+# Finish the feature (merges to develop)
+git flow feature finish feature-name
+
+# Create a release
+git flow release start v1.1.0
+
+# Finish release (merges to main and develop)
+git flow release finish v1.1.0
+
+# Create hotfix for critical issues
+git flow hotfix start critical-fix
+git flow hotfix finish critical-fix
+```
+
+### Commit Message Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, etc.)
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+- `chore:` - Maintenance tasks
+
 ## 🔧 Development
 
 ### Available Scripts
@@ -338,12 +385,58 @@ Enhanced CORS configuration for MCP compatibility:
 - **Methods**: All HTTP methods for maximum compatibility
 - **Session Security**: Session-based transport isolation
 
+## 🚨 Troubleshooting
+
+### Common Issues
+
+#### 1. Port Already in Use
+```bash
+# Check what's using port 3000
+netstat -ano | findstr :3000
+
+# Kill the process or change port in server.ts
+```
+
+#### 2. TypeScript Compilation Errors
+```bash
+# Clean and rebuild
+npm run clean
+npm run build
+```
+
+#### 3. MCP Connection Issues
+- Ensure proper `Mcp-Session-Id` header
+- Check CORS configuration for web clients
+- Verify JSON-RPC 2.0 format in requests
+
+#### 4. STDIO Mode Not Working
+```bash
+# Ensure proper environment variable
+export MCP_STDIO=true
+npm run dev:stdio
+```
+
+### Debug Mode
+
+Enable debug logging by setting environment variable:
+```bash
+DEBUG=mcp:* npm run dev
+```
+
+### Performance Monitoring
+
+The health endpoint provides real-time metrics:
+```bash
+curl http://localhost:3000/health | jq
+```
+
 ## 📚 Learn More
 
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/)
 - [Official TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 - [MCP Server Examples](https://github.com/modelcontextprotocol)
 - [Fastify Documentation](https://fastify.dev/)
+- [Git Flow Documentation](https://nvie.com/posts/a-successful-git-branching-model/)
 
 ## 📝 License
 
@@ -352,11 +445,11 @@ MIT License - see LICENSE file for details
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch using Git Flow: `git flow feature start feature-name`
 3. Follow the existing patterns from official SDK documentation
 4. Add tests if applicable
 5. Submit a pull request
 
 ---
 
-**Built following [Official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices** 🎯 
+**Built following [Official MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) best practices** 

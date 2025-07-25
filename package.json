@@ -7,12 +7,23 @@
   "scripts": {
     "dev": "tsx src/server.ts",
     "dev:stdio": "tsx src/server.ts --stdio",
+    "dev:debug": "DEBUG=mcp:* tsx src/server.ts",
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "start": "node dist/server.js",
     "start:stdio": "node dist/server.js --stdio",
     "clean": "rimraf dist",
     "lint": "eslint src/**/*.ts",
-    "test": "echo \"Tests not implemented yet\" && exit 0"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "test": "echo \"Tests not implemented yet\" && exit 0",
+    "test:watch": "echo \"Tests not implemented yet\" && exit 0",
+    "type-check": "tsc --noEmit",
+    "prebuild": "npm run clean",
+    "postbuild": "echo \"Build completed successfully!\"",
+    "prestart": "npm run build",
+    "validate": "npm run type-check && npm run lint",
+    "prepare": "husky install"
   },
   "keywords": [
     "mcp",
@@ -21,7 +32,11 @@
     "typescript",
     "server",
     "template",
-    "sdk"
+    "sdk",
+    "ai",
+    "llm",
+    "claude",
+    "anthropic"
   ],
   "author": "Your Name",
   "license": "MIT",
@@ -29,6 +44,10 @@
     "type": "git",
     "url": "https://github.com/dhinojosac/ts-template-mcp.git"
   },
+  "bugs": {
+    "url": "https://github.com/dhinojosac/ts-template-mcp/issues"
+  },
+  "homepage": "https://github.com/dhinojosac/ts-template-mcp#readme",
   "dependencies": {
     "@fastify/cors": "^10.0.1",
     "@modelcontextprotocol/sdk": "^1.0.4",
@@ -39,11 +58,26 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
