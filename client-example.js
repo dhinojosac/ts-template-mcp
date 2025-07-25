@@ -40,7 +40,7 @@ async function runClientExample() {
     console.log();
 
     // 2. Call the sayHello tool
-    console.log("👋 Calling sayHello tool:");
+    console.log("Calling sayHello tool:");
     const helloResult = await client.callTool({
       name: "sayHello",
       arguments: {
@@ -154,7 +154,7 @@ async function runClientExample() {
     console.log();
 
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error("Error:", error.message);
     
     if (error.message.includes("ECONNREFUSED")) {
       console.error("💡 Make sure the MCP server is running on http://localhost:3000");
@@ -235,7 +235,7 @@ async function demonstrateErrorHandling() {
 
     await client.close();
   } catch (error) {
-    console.error("❌ Connection error:", error.message);
+    console.error("Connection error:", error.message);
   }
 }
 
@@ -245,7 +245,7 @@ console.log("Starting MCP Client Example...\n");
 runClientExample()
   .then(() => demonstrateErrorHandling())
   .then(() => {
-    console.log("\n🎉 MCP Client example completed!");
+    console.log("\nMCP Client example completed!");
     console.log("📚 Learn more: https://github.com/modelcontextprotocol/typescript-sdk");
     console.log("🔗 Your server: https://github.com/dhinojosac/ts-template-mcp");
   })
