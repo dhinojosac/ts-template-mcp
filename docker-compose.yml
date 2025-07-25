@@ -1,0 +1,41 @@
+services:
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner # Use the production stage from multi-stage build
+    ports:
+      - '3000:3000' # Expose port 3000 for HTTP access
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0 # Bind to all interfaces for Docker networking
+    restart: unless-stopped # Automatically restart on failure
+    healthcheck:
+      # PROBLEM FIXED: Changed from wget to curl (wget not available in Alpine)
+      # curl -f flag fails silently on HTTP errors, perfect for healthchecks
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s # Check every 30 seconds
+      timeout: 10s # Timeout after 10 seconds
+      retries: 3 # Mark unhealthy after 3 failed attempts
+      start_period: 40s # Wait 40 seconds before first health check
+
+  mcp-server-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DEBUG=mcp:*
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+    command: npm run dev
+    profiles:
+      - dev
