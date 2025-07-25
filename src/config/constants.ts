@@ -19,7 +19,10 @@ export const LOGGING_CONFIG = {
 } as const;
 
 export const CORS_CONFIG = {
-  ORIGIN: process.env['CORS_ORIGIN'] === 'true' ? true : process.env['CORS_ORIGIN'] || '*',
+  ORIGIN:
+    process.env['CORS_ORIGIN'] === 'true'
+      ? true
+      : process.env['CORS_ORIGIN'] || '*',
   CREDENTIALS: process.env['CORS_CREDENTIALS'] === 'true',
   ALLOWED_HEADERS: [
     'Content-Type',
@@ -88,4 +91,4 @@ export const MCP_METHODS = {
   RESOURCES_READ: 'resources/read',
   PROMPTS_LIST: 'prompts/list',
   PROMPTS_GET: 'prompts/get',
-} as const; 
+} as const;

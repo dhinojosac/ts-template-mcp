@@ -11,6 +11,10 @@ A comprehensive **TypeScript MCP Server Template** following the [official MCP T
 - **@fastify/cors** - CORS support for web clients
 - **tsx** - Modern TypeScript execution
 - **pino-pretty** - Beautiful development logging
+- **ESLint** - Code linting and quality
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+- **Docker** - Containerization
 
 ## 📦 Project Structure
 
@@ -18,16 +22,29 @@ A comprehensive **TypeScript MCP Server Template** following the [official MCP T
 ts-template-mcp-server/
 ├── src/
 │   ├── server.ts              # MCP server with Zod validation
+│   ├── config/
+│   │   └── constants.ts       # Centralized configuration
+│   ├── utils/
+│   │   ├── errorHandler.ts    # Error handling utilities
+│   │   └── logger.ts          # Logging utilities
 │   ├── schemas/
 │   │   ├── toolSchemas.ts     # Zod schemas for tool validation
 │   │   └── commonSchemas.ts   # Reusable validation schemas
 │   └── plugins/
 │       ├── helloPlugin.ts     # Fastify plugin with REST endpoint
 │       └── weatherPlugin.ts   # Weather tools with Zod validation
+├── .github/workflows/
+│   └── ci.yml                 # CI/CD pipeline
 ├── client-example.js          # Client usage examples
-├── tsconfig.json              # TypeScript configuration
-├── package.json               # Dependencies and scripts
-└── README.md                  # This documentation
+├── Dockerfile                 # Docker configuration
+├── docker-compose.yml         # Docker Compose setup
+├── .eslintrc.json            # ESLint configuration
+├── .prettierrc               # Prettier configuration
+├── .husky/pre-commit         # Git hooks
+├── env.example               # Environment variables example
+├── tsconfig.json             # TypeScript configuration
+├── package.json              # Dependencies and scripts
+└── README.md                 # This documentation
 ```
 
 ## Getting Started
@@ -38,7 +55,15 @@ ts-template-mcp-server/
 npm install
 ```
 
-### 2. Start Development Server
+### 2. Environment Setup
+
+Copy the environment example file and configure your variables:
+
+```bash
+cp env.example .env
+```
+
+### 3. Start Development Server
 
 **HTTP Mode (for web clients):**
 ```bash
@@ -50,7 +75,12 @@ npm run dev
 npm run dev:stdio
 ```
 
-### 3. Build for Production
+**Debug Mode:**
+```bash
+npm run dev:debug
+```
+
+### 4. Build for Production
 
 ```bash
 # Clean previous build (optional)
@@ -97,7 +127,7 @@ Expected response:
   "version": "1.0.0",
   "uptime": 123.456,
   "sessions": 0,
-  "capabilities": ["tools", "resources", "prompts"]
+  "capabilities": ["tools", "resources"]
 }
 ```
 
@@ -264,6 +294,9 @@ This template follows the [official MCP TypeScript SDK documentation](https://gi
 3. **Multiple Capabilities**: Tools, resources, AND prompts (many examples only show one)
 4. **Production Ready**: Graceful shutdown, health checks, proper logging
 5. **Type Safety**: Full TypeScript support without runtime schema validation overhead
+6. **Code Quality**: ESLint, Prettier, and Husky for consistent code
+7. **Containerization**: Docker support for easy deployment
+8. **CI/CD**: GitHub Actions pipeline for automated testing
 
 ### Integration Features
 
@@ -271,6 +304,8 @@ This template follows the [official MCP TypeScript SDK documentation](https://gi
 - **Logging**: Structured logging with pino-pretty for development
 - **Health Monitoring**: Detailed health endpoint with session metrics
 - **REST + MCP**: Hybrid server supporting both traditional REST and MCP protocols
+- **Error Handling**: Centralized error handling with custom error types
+- **Configuration**: Centralized configuration management
 
 ## 🔄 Git Flow Workflow
 
@@ -324,10 +359,17 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 ### Available Scripts
 
 - `npm run dev` - Start development server with hot reload and pretty logging
+- `npm run dev:debug` - Start with debug logging enabled
+- `npm run dev:stdio` - Start in STDIO mode for CLI clients
 - `npm run build` - Compile TypeScript to JavaScript in `dist/` folder
+- `npm run build:watch` - Build with watch mode
 - `npm start` - Run compiled server (production mode)
 - `npm run clean` - Remove compiled files
-- `npm run lint` - Run ESLint (placeholder)
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Run ESLint with auto-fix
+- `npm run format` - Format code with Prettier
+- `npm run type-check` - Run TypeScript type checking
+- `npm run validate` - Run type check and linting
 - `npm test` - Run tests (placeholder)
 
 ### Environment Requirements
@@ -376,6 +418,37 @@ case "myTool":
 2. Handle generation in `prompts/get` handler
 3. Return proper message format with roles
 
+## 🐳 Docker Support
+
+### Building the Image
+
+```bash
+docker build -t ts-template-mcp-server .
+```
+
+### Running with Docker
+
+```bash
+# Production mode
+docker run -p 3000:3000 ts-template-mcp-server
+
+# Development mode
+docker-compose up mcp-server-dev
+```
+
+### Docker Compose
+
+```bash
+# Start all services
+docker-compose up
+
+# Start only production server
+docker-compose up mcp-server
+
+# Start development server
+docker-compose --profile dev up mcp-server-dev
+```
+
 ## 🌐 CORS & Security
 
 Enhanced CORS configuration for MCP compatibility:
@@ -414,6 +487,15 @@ npm run build
 # Ensure proper environment variable
 export MCP_STDIO=true
 npm run dev:stdio
+```
+
+#### 5. Linting Errors
+```bash
+# Auto-fix linting issues
+npm run lint:fix
+
+# Format code
+npm run format
 ```
 
 ### Debug Mode

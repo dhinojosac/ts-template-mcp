@@ -41,8 +41,7 @@
     "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src/**/*",
-    "client-example.js"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

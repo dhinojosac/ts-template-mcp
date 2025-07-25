@@ -31,18 +31,25 @@ export class MCPError extends Error implements AppError {
   }
 }
 
-export function handleError(error: FastifyError, request: FastifyRequest, reply: FastifyReply) {
+export function handleError(
+  error: FastifyError,
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
   const { log } = request.server;
 
   // Log the error
-  log.error({
-    error: error.message,
-    stack: error.stack,
-    url: request.url,
-    method: request.method,
-    headers: request.headers,
-    body: request.body,
-  }, 'Request error');
+  log.error(
+    {
+      error: error.message,
+      stack: error.stack,
+      url: request.url,
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
+    },
+    'Request error'
+  );
 
   // Handle different types of errors
   if (error instanceof ZodError) {
@@ -87,7 +94,7 @@ export function handleError(error: FastifyError, request: FastifyRequest, reply:
 
   // Default error response
   const statusCode = error.statusCode || 500;
-  
+
   return reply.status(statusCode).send({
     error: error.message || 'Internal Server Error',
     statusCode,
@@ -96,7 +103,11 @@ export function handleError(error: FastifyError, request: FastifyRequest, reply:
   });
 }
 
-export function createError(message: string, statusCode: number = 500, code?: string): AppError {
+export function createError(
+  message: string,
+  statusCode: number = 500,
+  code?: string
+): AppError {
   const error = new Error(message) as AppError;
   error.statusCode = statusCode;
   if (code) {
@@ -105,7 +116,11 @@ export function createError(message: string, statusCode: number = 500, code?: st
   return error;
 }
 
-export function validateAndThrow(data: any, schema: any, message: string = 'Validation failed') {
+export function validateAndThrow(
+  data: any,
+  schema: any,
+  message: string = 'Validation failed'
+) {
   try {
     return schema.parse(data);
   } catch (error) {
@@ -114,4 +129,4 @@ export function validateAndThrow(data: any, schema: any, message: string = 'Vali
     }
     throw error;
   }
-} 
+}
