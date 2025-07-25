@@ -180,7 +180,7 @@ curl http://localhost:3000/health
 ```json
 {
   "status": "ok",
-  "timestamp": "2024-01-01T12:00:00.000Z",
+  "timestamp": "2025-07-25T12:00:00.000Z",
   "server": "ts-template-mcp-server",
   "version": "1.0.0",
   "uptime": 123.456,
