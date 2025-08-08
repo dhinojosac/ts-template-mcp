@@ -4,6 +4,21 @@ A comprehensive **TypeScript MCP Server Template** following the [official MCP T
 
 **[📖 README en Español](README_ES.md)** - Para usuarios que prefieren documentación en español
 
+## 📌 How to Use or Contribute
+
+This repository is available as both a **collaborative project** and a **template**:
+
+- **Use as a template** → Create your own MCP server project instantly by clicking [Use this template](../../generate).
+- **Contribute improvements** → Fork this repo, make your changes, and send a Pull Request so we can review and integrate them.
+
+We welcome:
+- New MCP tools, resources, and prompts
+- Performance optimizations
+- Documentation improvements
+- Bug fixes and code quality enhancements
+
+If you create something based on this template, please mention this repository in your README.
+
 ## 🛠️ Tech Stack & Tools Explained
 
 ### Core Technologies
@@ -696,11 +711,18 @@ MIT License - see LICENSE file for details
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch using Git Flow: `git flow feature start feature-name`
-3. Follow the existing patterns from official SDK documentation
-4. Add tests if applicable
-5. Submit a pull request
+We encourage both **direct contributions** and **independent projects** based on this template.
+
+1. **To collaborate**:  
+   - Fork the repository.  
+   - Create a feature branch using Git Flow: `git flow feature start feature-name`.  
+   - Follow the patterns from the official MCP SDK documentation.  
+   - Add tests if applicable.  
+   - Submit a Pull Request.
+
+2. **To create your own project without linking back**:  
+   - Click [Use this template](../../generate) and start building.
+
 
 ---
 
