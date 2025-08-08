@@ -18,11 +18,6 @@ export const LongitudeSchema = z
   .max(180, 'Longitude must be between -180 and 180')
   .describe('Longitude coordinate');
 
-export const CoordinatesSchema = z.object({
-  latitude: LatitudeSchema,
-  longitude: LongitudeSchema,
-});
-
 // Common location schemas
 export const CitySchema = z
   .string()
@@ -140,7 +135,6 @@ export const NameSchema = z
   .describe("Person's name");
 
 // Type exports
-export type Coordinates = z.infer<typeof CoordinatesSchema>;
 export type DateRange = z.infer<typeof DateRangeSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;
 export type SearchOptions = z.infer<typeof SearchOptionsSchema>;

@@ -7,61 +7,32 @@ import {
   type WeatherForecastArgs,
   type WeatherAlertsArgs,
 } from '../schemas/toolSchemas.js';
+import { LatitudeSchema, LongitudeSchema } from '@/schemas/commonSchemas.js';
 
 /**
  * Weather plugin demonstrating Zod validation for larger MCP projects
  * Shows how to organize tools by domain/plugin
  */
 export function registerWeatherTools(server: McpServer) {
-  // Weather forecast tool with Zod validation
+  // Weather forecast tool with proper parameter schema
   server.registerTool(
     'getWeatherForecast',
     {
       title: 'Get Weather Forecast',
       description:
         'Get weather forecast for a specific location using coordinates',
+      inputSchema: {
+        latitude: LatitudeSchema,
+        longitude: LongitudeSchema,
+      },
     },
-    async (args: { [x: string]: any }) => {
-      const { latitude, longitude }: WeatherForecastArgs = validateToolArgs(
-        WeatherForecastSchema,
-        args
-      );
-
-      // Simulate weather API call (replace with actual API)
+    async ({ latitude, longitude }) => {
       const forecast = await simulateWeatherAPI(latitude, longitude);
-
       return {
         content: [
           {
             type: 'text',
             text: `Weather forecast for coordinates (${latitude}, ${longitude}):\n${forecast}`,
-          },
-        ],
-      };
-    }
-  );
-
-  // Weather alerts tool with Zod validation
-  server.registerTool(
-    'getWeatherAlerts',
-    {
-      title: 'Get Weather Alerts',
-      description: 'Get active weather alerts for a US state',
-    },
-    async (args: { [x: string]: any }) => {
-      const { state }: WeatherAlertsArgs = validateToolArgs(
-        WeatherAlertsSchema,
-        args
-      );
-
-      // Simulate alerts API call (replace with actual API)
-      const alerts = await simulateAlertsAPI();
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Weather alerts for ${state}:\n${alerts}`,
           },
         ],
       };
@@ -90,9 +61,9 @@ async function simulateWeatherAPI(
   return `
 🌤️  Current Conditions: ${condition}
 🌡️  Temperature: ${temperature}°C
-        Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}
+🌍 Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}
 ⏰ Updated: ${new Date().toLocaleString()}
-  `.trim();
+`.trim();
 }
 
 /**
